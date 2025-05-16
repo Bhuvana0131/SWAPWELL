@@ -20,7 +20,7 @@ if not api_key:
     print("Setting a placeholder API key for development. This will not work for actual API calls.")
     # Setting a placeholder API key to allow the application to start
     # This won't work for actual API calls but prevents immediate exit
-    api_key = "AIzaSyDwS-kM0t0LwrOtkKwnCVgX5t6P6ptgsuc"
+    api_key = "A"
 
 # Import Google GenerativeAI after checking API key
 try:
