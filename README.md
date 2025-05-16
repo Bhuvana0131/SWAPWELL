@@ -13,6 +13,6 @@ SwapWell is a smart web app that helps users make healthier food choices. Built 
 
 ![image alt](https://github.com/Bhuvana0131/SWAPWELL/blob/11de82b9f65dd76317d4d9e529cd9ae724b91cde/Screenshot%202025-05-16%20184055.png)
 
-![image alt]()
+![image alt](https://github.com/Bhuvana0131/SWAPWELL/blob/bd10dc7e31f589d473d39ebb508ab2fce2f95bd5/Screenshot%202025-05-16%20184930.png)
 
-![image alt]()
+![image alt](https://github.com/Bhuvana0131/SWAPWELL/blob/bd10dc7e31f589d473d39ebb508ab2fce2f95bd5/Screenshot%202025-05-16%20184953.png)
