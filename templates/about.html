@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SWAPWELL - About & Contact</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+    <style>
+        /* General Styles */
+        :root {
+            --primary-color: #edab69;
+            /* Orange */
+            --secondary-color: #787171;
+            /* Dark Grey */
+            --text-color: #f38e36;
+            --bg-color: #1a1a1a;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* Header Styles */
+        h2 {
+            color: var(--primary-color);
+            border-bottom: 3px solid var(--primary-color);
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+            font-size: 2.4em;
+            text-shadow: 1px 1px 2px rgba(221, 159, 159, 0.1);
+        }
+
+        /* Section Styles */
+        section {
+            margin: 30px auto;
+            padding: 40px;
+            background: rgba(34, 34, 34, 0.7);
+            border-radius: 15px;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+            max-width: 80%;
+            opacity: 0;
+            animation: fadeIn 1s forwards 0.5s;
+        }
+
+        /* About Us Section */
+        #about p {
+            font-size: 1.1em;
+            line-height: 1.7;
+            color: #fff;
+        }
+
+        /* Contact Section */
+        #contact form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        #contact label {
+            font-size: 1.1em;
+            margin-bottom: 5px;
+        }
+
+        #contact input[type="text"],
+        #contact input[type="email"],
+        #contact textarea {
+            padding: 10px;
+            margin-bottom: 15px;
+            border-radius: 5px;
+            border: none;
+            box-shadow: inset 2px 2px 5px rgba(0, 0, 0, 0.3);
+            background-color: rgba(255, 255, 255, 0.1);
+            color: var(--text-color);
+            transition: box-shadow 0.3s;
+        }
+
+        #contact input[type="text"]:focus,
+        #contact input[type="email"]:focus,
+        #contact textarea:focus {
+            box-shadow: inset 2px 2px 5px rgba(0, 0, 0, 0.5);
+        }
+
+        #contact button {
+            background-color: var(--primary-color);
+            color: #fff;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.3s;
+        }
+
+        #contact button:hover {
+            background-color: #e68a2e;
+            transform: scale(1.05);
+        }
+
+        /* Keyframes for Animations */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Flash message styles */
+        .flash {
+            margin: 20px auto;
+            padding: 10px;
+            max-width: 80%;
+            border-radius: 5px;
+        }
+        .flash.success {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        .flash.error {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+    </style>
+</head>
+<body>
+       <section id="about">
+        <h2>About Us</h2>
+        <p>At SWAPWELL, we believe that healthy eating should be accessible, enjoyable, and sustainable for everyone. Our mission is to empower
+            individuals and families to make nutritious food choices through simple swaps that enhance their diets without compromising on taste.</p>
+        <p>Our team is passionate about food and wellness, dedicated to creating a community where everyone can thrive. We collaborate with
+            nutritionists, chefs, and local organizations to bring you the latest in healthy eating trends, recipes, and educational content.</p>
+        <p>Join us on this journey towards better health and discover how easy it can be to make positive changes in your eating habits!</p>
+    </section>
+
+    <section id="contact">
+        <h2>Get in Touch</h2>
+        <form action="https://api.web3forms.com/submit" method="POST">
+            <input type="hidden" name="access_key" value="15faec88-59e5-42e1-b5ba-73b4a5d8caaf">
+
+            <label for="name">Name:</label><br>
+            <input type="text" id="name" name="name" required><br>
+
+            <label for="email">Email:</label><br>
+            <input type="email" id="email" name="email" required><br>
+
+            <label for="message">Feedback:</label><br>
+            <textarea id="message" name="message" required></textarea><br>
+
+            <button type="submit">Submit</button>
+        </form>
+    </section>
+</body>
+</html>

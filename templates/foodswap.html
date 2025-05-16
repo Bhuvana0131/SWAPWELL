@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Find Healthy Food Alternatives</title>
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif; /* Modern font */
+            margin: 0;
+            padding: 0;
+            background: url('https://images.unsplash.com/photo-1490645935967-10de6ba17061?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1770&q=80') no-repeat center center fixed; /* Food background */
+            background-size: cover;
+            -webkit-background-size: cover;
+            -moz-background-size: cover;
+            -o-background-size: cover;
+            height: 100vh;
+            overflow: auto;
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start; /* Align content at the top */
+            min-height: 100vh; /* Ensure full height */
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5); /* Dark overlay */
+            z-index: -1;
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+        }
+
+        .container {
+            width: 80%;
+            max-width: 800px;
+            margin-top: 50px; /* Added top margin */
+            padding: 30px;
+            background-color: rgba(255, 255, 255, 0.1); /* Transparent white */
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .container:hover {
+            transform: translateY(-5px);
+        }
+
+        h1 {
+            font-size: 2.5em;
+            color: #fff;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            animation: fadeInDown 1s ease-in-out;
+        }
+
+        input[type="text"] {
+            padding: 12px 15px;
+            width: 70%;
+            border: none;
+            border-radius: 8px;
+            margin-right: 15px;
+            font-size: 1em;
+            color: #333;
+            background-color: rgba(255, 255, 255, 0.7);
+            transition: background-color 0.3s;
+        }
+
+        input[type="text"]:focus {
+            outline: none;
+            background-color: rgba(255, 255, 255, 0.9);
+        }
+
+        button {
+            padding: 12px 25px;
+            background-color: #5cb85c; /* Green */
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background-color 0.3s, transform 0.2s;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+        }
+
+        button:hover {
+            background-color: #4cae4c; /* Darker green */
+            transform: translateY(-2px);
+        }
+
+        .food-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-top: 40px;
+            animation: fadeInUp 1s ease-in-out;
+        }
+
+        .food-alternative {
+            width: calc(50% - 20px);
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            margin: 10px;
+            padding: 20px;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+            text-align: left;
+            transition: transform 0.3s, box-shadow 0.3s;
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+        }
+
+        .food-alternative:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5);
+        }
+
+        .food-alternative h3 {
+            color: #fff;
+            margin-top: 0;
+            margin-bottom: 15px;
+            font-size: 1.4em;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+        }
+
+        .food-data {
+            margin-top: 15px;
+        }
+
+        .food-data p {
+            color: #eee;
+            margin: 8px 0;
+            font-size: 1.1em;
+            line-height: 1.4;
+        }
+
+        #loading {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 1000;
+        }
+
+        .loader {
+            border: 8px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top: 8px solid #fff;
+            width: 60px;
+            height: 60px;
+            animation: spin 2s linear infinite;
+        }
+
+        /* Keyframes for Animations */
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Media Queries for Responsiveness */
+        @media (max-width: 768px) {
+            .container {
+                width: 95%;
+                margin-top: 30px;
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 2em;
+            }
+
+            input[type="text"] {
+                width: 100%;
+                margin-right: 0;
+                margin-bottom: 15px;
+            }
+
+            button {
+                width: 100%;
+                padding: 15px;
+                font-size: 1.1em;
+            }
+
+            .food-alternative {
+                width: 95%;
+                margin: 10px auto;
+                padding: 15px;
+            }
+
+            .food-data {
+                display: flex;
+                flex-direction: column;
+            }
+        }
+
+        /* NEW CSS FOR VERTICAL DATA */
+        .food-data {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .food-data p {
+            margin: 5px 0;
+        }
+    </style>
+</head>
+<body>
+    <div id="loading">
+        <div class="loader"></div>
+    </div>
+
+    <div class="container">
+        <h1>Find Healthy Food Alternatives</h1>
+        <input type="text" id="foodInput" placeholder="Enter food item">
+        <button onclick="findAlternatives()">Search</button>
+    </div>
+
+    <div class="food-container" id="alternativesContainer">
+        <!-- Alternatives will be displayed here -->
+    </div>
+
+    <script>
+        async function findAlternatives() {
+            const foodItem = document.getElementById('foodInput').value;
+            const loadingDiv = document.getElementById('loading');
+
+            if (!foodItem) {
+                alert("Please enter a food item.");
+                return;
+            }
+
+            loadingDiv.style.display = 'block'; // Show loading
+
+            try {
+                const response = await fetch('/find_alternatives', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ food_item: foodItem })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    displayAlternatives(data.alternatives);
+                } else {
+                    alert("Error: " + data.error);
+                }
+            } finally {
+                loadingDiv.style.display = 'none'; // Hide loading
+            }
+        }
+
+        function displayAlternatives(alternatives) {
+            const container = document.getElementById('alternativesContainer');
+            container.innerHTML = ''; // Clear previous results
+
+            alternatives.forEach(alt => {
+                const altDiv = document.createElement('div');
+                altDiv.className = 'food-alternative';
+
+                const nameHeader = document.createElement('h3');
+                nameHeader.textContent = alt.name;
+                altDiv.appendChild(nameHeader);
+
+                 const descriptionPara = document.createElement('p');
+                descriptionPara.textContent = alt.description; // add description
+                altDiv.appendChild(descriptionPara);
+
+
+                const dataDiv = document.createElement('div');
+                dataDiv.className = 'food-data';
+
+                const calories = document.createElement('p');
+                calories.textContent = `Calories: ${alt.nutritionalInfo.calories}`;
+                dataDiv.appendChild(calories);
+
+                const protein = document.createElement('p');
+                protein.textContent = `Protein: ${alt.nutritionalInfo.protein}g`;
+                dataDiv.appendChild(protein);
+
+                const carbs = document.createElement('p');
+                carbs.textContent = `Carbs: ${alt.nutritionalInfo.carbs}g`;
+                dataDiv.appendChild(carbs);
+
+                const fats = document.createElement('p');
+                fats.textContent = `Fats: ${alt.nutritionalInfo.fats}g`;
+                dataDiv.appendChild(fats);
+
+                 const energy = document.createElement('p');
+                energy.textContent = `Energy: ${alt.nutritionalInfo.energy}`;
+                dataDiv.appendChild(energy);
+
+
+                altDiv.appendChild(dataDiv);
+                container.appendChild(altDiv);
+            });
+        }
+    </script>
+</body>
+</html>

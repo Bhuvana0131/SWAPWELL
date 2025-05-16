@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Recipe Generator</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+            background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.8)), 
+                        url('../static/assets/horr5.png');
+            background-size: cover;
+            background-attachment: fixed;
+            background-position: center;
+            min-height: 100vh;
+            color: #fff;
+            overflow-x: hidden;
+            position: relative;
+        }
+        .search-bar {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 40px;
+            padding: 20px;
+            backdrop-filter: blur(8px);
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 10px;
+            animation: fadeIn 1s ease-in-out;
+        }
+
+        .search-bar input {
+            width: 300px;
+            padding: 10px;
+            border: 2px solid #ff7700;
+            border-radius: 5px 0 0 5px;
+            font-size: 1rem;
+            background: transparent;
+            color: white;
+        }
+
+        .search-bar button {
+            padding: 10px 20px;
+            border: none;
+            background: #ff7700;
+            color: white;
+            font-size: 1rem;
+            border-radius: 0 5px 5px 0;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .search-bar button:hover {
+            background: #ff5400;
+            transform: scale(1.1);
+        }
+
+        .results {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            padding: 20px;
+        }
+
+        /* Updated meal card styles with hover effects */
+        .meal {
+            width: 300px;
+            border-radius: 5px;
+            background: rgba(255, 255, 255, 0.1);
+            box-shadow: 0 4px 15px rgba(255, 119, 0, 0.3);
+            backdrop-filter: blur(5px);
+            padding: 20px;
+            transition: all 0.3s ease-in-out;
+            position: relative;
+            overflow: hidden;
+            filter: blur(0px);
+        }
+
+        /* Blur effect for non-hovered cards */
+        .results:hover .meal:not(:hover) {
+            filter: blur(3px);
+            opacity: 0.7;
+        }
+
+        .meal:hover {
+            transform: translateY(-10px) scale(1.05);
+            z-index: 10;
+            filter: blur(0);
+            opacity: 1;
+        }
+
+        .meal h3 {
+            font-size: 1.2rem;
+            color: #ff7700;
+        }
+
+        /* Hide recipe details by default */
+        .recipe-ingredients,
+        .recipe-instructions {
+            max-height: 0;
+            opacity: 0;
+            overflow: hidden;
+            transition: all 0.5s ease;
+        }
+
+        /* Show recipe details on hover */
+        .meal:hover .recipe-ingredients,
+        .meal:hover .recipe-instructions {
+            max-height: 500px;
+            opacity: 1;
+            margin-top: 15px;
+        }
+
+        /* Keep name and origin visible */
+        .recipe-name,
+        .recipe-origin {
+            transition: all 0.3s ease;
+        }
+
+        .meal:not(:hover) .recipe-name h3 {
+            margin-bottom: 0;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Recipe Generator</h1>
+        <p>Real food doesn't have ingredients, real food <em>is</em> ingredients.<br>&mdash; Jamie Oliver</p>
+    </header>
+
+    <div class="search-bar">
+        <input type="text" id="ingredient" placeholder="Enter ingredients (e.g., tomato, onion, egg)">
+        <button onclick="searchMeals()">Search</button>
+    </div>
+
+    <div class="results" id="results"></div>
+
+    <script>
+      async function searchMeals() {
+    const ingredientInput = document.getElementById('ingredient').value.trim();
+    const resultsDiv = document.getElementById('results');
+    resultsDiv.innerHTML = '<p>Fetching recipes...</p>';
+
+    if (!ingredientInput) {
+        alert('Please enter ingredients');
+        return;
+    }
+
+    try {
+        const response = await fetch('/generate_recipe', {  // Flask endpoint
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ food: ingredientInput })
+        });
+
+        const data = await response.json();
+        resultsDiv.innerHTML = '';
+
+        if (data.success) {
+            data.recipes.forEach(recipe => {
+                const mealCard = document.createElement('div');
+                mealCard.className = 'meal single-column';
+                
+                // Join instructions into a detailed paragraph
+                const instructionsText = recipe.instructions.join('. ') + '.';
+                
+                // Format ingredients as a comma-separated list
+                const ingredientsList = [ingredientInput, ...recipe.additionalIngredients].join(', ');
+                
+                // Create a concise 3-4 line description or use the provided one
+                const conciseDescription = recipe.origin || 
+                    'This beloved dish combines traditional flavors with modern cooking techniques. ' +
+                    'Its rich history dates back generations in home kitchens around the world. ' +
+                    'Perfect for family gatherings, this recipe brings warmth and comfort to any table.';
+                
+                mealCard.innerHTML = `
+                    <div class="recipe-name">
+                        <h3>${recipe.name}</h3>
+                    </div>
+                    
+                    <div class="recipe-origin">
+                        <p>${conciseDescription}</p>
+                    </div>
+                    
+                    <div class="recipe-ingredients">
+                        <h4>Ingredients</h4>
+                        <p>${ingredientsList}</p>
+                    </div>
+                    
+                    <div class="recipe-instructions">
+                        <h4>Recipe</h4>
+                        <p><strong>Cook Time:</strong> ${recipe.cookTime || '30 minutes'} | <strong>Servings:</strong> ${recipe.servingSize || '4'}</p>
+                        <p class="full-instructions">${instructionsText}</p>
+                    </div>
+                `;
+                resultsDiv.appendChild(mealCard);
+            });
+            
+            // Add the CSS for the single column layout
+            const styleSheet = document.createElement("style");
+            styleSheet.textContent = `
+                .single-column {
+                    display: flex;
+                    flex-direction: column;
+                    text-align: left;
+                    max-width: 100%;
+                }
+                
+                .recipe-name {
+                    margin-bottom: 10px;
+                }
+                
+                .recipe-name h3 {
+                    color: #ff7700;
+                    margin: 0;
+                }
+                
+                .recipe-origin {
+                    margin-bottom: 20px;
+                }
+                
+                .recipe-origin p {
+                    font-style: italic;
+                    color: #e0e0e0;
+                    line-height: 1.6;
+                    margin: 0;
+                    max-width: 100%;
+                    font-size: 0.95rem;
+                }
+                
+                .recipe-ingredients {
+                    margin-bottom: 20px;
+                }
+                
+                .recipe-ingredients h4, .recipe-instructions h4 {
+                    color: #ff7700;
+                    margin-bottom: 8px;
+                }
+                
+                .recipe-ingredients p {
+                    line-height: 1.5;
+                    margin: 0;
+                }
+                
+                .recipe-instructions p {
+                    margin: 8px 0;
+                    line-height: 1.6;
+                }
+                
+                .full-instructions {
+                    text-align: justify;
+                }
+            `;
+            document.head.appendChild(styleSheet);
+            
+        } else {
+            resultsDiv.innerHTML = `<p>Error: ${data.error}</p>`;
+        }
+    } catch (error) {
+        resultsDiv.innerHTML = `<p>Error fetching recipes: ${error.message}</p>`;
+    }
+}
+    </script>
+</body>
+</html>

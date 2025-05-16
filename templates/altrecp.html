@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Healthy Alternate Recipes</title>
+    <style>
+        /* General styles */
+        :root {
+            --primary-color: #FF6B1A;
+            --primary-light: #FF8C42;
+            --dark-bg: rgba(20, 20, 20, 0.8);
+            --card-bg: rgba(30, 30, 30, 0.8);
+            --nutrition-bg: rgba(40, 40, 40, 0.8);
+        }
+
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.8)), 
+                        url('../static/assets/HOR11.jpg');
+            background-size: cover;
+            background-attachment: fixed;
+            background-position: center;
+            min-height: 100vh;
+            color: #FF6B1A;
+        }
+
+        .header {
+            background: var(--dark-bg);
+            backdrop-filter: blur(10px);
+            color: var(--primary-color);
+            text-align: center;
+            padding: 1.5rem;
+            box-shadow: 0 4px 15px rgba(255, 107, 26, 0.2);
+            animation: headerSlideDown 0.8s ease-out;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+        }
+
+        .header h1, .header h2 {
+            margin: 0;
+            font-size: 2.5rem;
+        }
+
+        .emoji {
+            font-size: 2rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+            animation: fadeIn 1s ease-out;
+        }
+
+        /* Search bar styles */
+        .search-bar {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            justify-content: center;
+            animation: slideUp 0.6s ease-out;
+        }
+
+        #search-input {
+            padding: 1rem;
+            width: 100%;
+            max-width: 500px;
+            border: 2px solid rgba(255, 107, 26, 0.3);
+            border-radius: 8px;
+            font-size: 1.1rem;
+            background: var(--card-bg);
+            backdrop-filter: blur(5px);
+            color: #fff;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        #search-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 4px 20px rgba(255, 107, 26, 0.3);
+            transform: translateY(-2px);
+        }
+
+        button {
+            padding: 1rem 2rem;
+            background: linear-gradient(45deg, var(--primary-color), var(--primary-light));
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(255, 107, 26, 0.2);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 107, 26, 0.4);
+            background: linear-gradient(45deg, var(--primary-light), var(--primary-color));
+        }
+
+        .search-icon {
+            font-size: 1.2rem;
+        }
+
+        /* Results section styles */
+        .results {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .results.show {
+            opacity: 1;
+            transform: translateY(0);
+            transition: all 0.5s ease-out;
+        }
+
+        .results h2, .results h3 {
+            text-align: center;
+            color: var(--primary-color);
+            margin-bottom: 2rem;
+            font-size: 2rem;
+        }
+
+        .alternatives-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .alternative-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border-radius: 12px;
+            padding: 1.8rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            transition: all 0.5s ease;
+            animation: cardAppear 0.6s ease-out;
+            transform-origin: center;
+            border: 1px solid rgba(255, 107, 26, 0.2);
+            position: relative;
+            overflow: hidden;
+            height: 160px; /* Fixed initial height */
+        }
+
+        .alternatives-container:has(.alternative-card:hover) .alternative-card:not(:hover) {
+            filter: blur(4px) grayscale(70%);
+            transform: scale(0.95);
+            opacity: 0.6;
+        }
+
+        .alternative-card:hover {
+            transform: translateY(-10px) scale(1.05);
+            box-shadow: 0 15px 35px rgba(255, 107, 26, 0.3);
+            border-color: var(--primary-color);
+            z-index: 10;
+            height: auto;
+            min-height: 400px; /* Expanded height on hover */
+        }
+
+        .alternative-card h3 {
+            color: var(--primary-color);
+            margin: 0 0 1rem 0;
+            font-size: 1.5rem;
+        }
+
+        .nutrition-info, .recipe-details, .ingredients-list, .cooking-instructions, .serving-suggestions {
+            background: var(--nutrition-bg);
+            backdrop-filter: blur(5px);
+            padding: 1.2rem;
+            border-radius: 8px;
+            margin: 1.2rem 0;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 107, 26, 0.1);
+            opacity: 0;
+            max-height: 0;
+            overflow: hidden;
+            transform: translateY(20px);
+            transition: all 0.4s ease-out;
+        }
+
+        .alternative-card:hover .nutrition-info,
+        .alternative-card:hover .recipe-details,
+        .alternative-card:hover .ingredients-list,
+        .alternative-card:hover .cooking-instructions,
+        .alternative-card:hover .serving-suggestions {
+            opacity: 1;
+            max-height: 1000px;
+            transform: translateY(0);
+        }
+
+        .nutrition-info h4, .recipe-details h4, .ingredients-list h4, 
+        .cooking-instructions h4, .serving-suggestions h4 {
+            color: var(--primary-color);
+            margin: 0 0 1rem 0;
+            font-size: 1.2rem;
+        }
+
+        .nutrition-info ul, .ingredients-list ul, .serving-suggestions ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .nutrition-info li, .ingredients-list li, .recipe-details p,
+        .serving-suggestions li {
+            margin: 0.8rem 0;
+            color: #ccc;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: transform 0.2s ease;
+        }
+
+        .nutrition-info li:hover, .ingredients-list li:hover,
+        .serving-suggestions li:hover {
+            transform: translateX(5px);
+            color: var(--primary-color);
+        }
+
+        .description {
+            color: #ccc;
+            line-height: 1.6;
+            margin: 1rem 0 0 0;
+            display: -webkit-box;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .alternative-card:hover .description {
+            overflow: visible;
+        }
+
+        /* Additional recipe information */
+        .recipe-meta {
+            display: flex;
+            gap: 1rem;
+            justify-content: space-between;
+            color: #aaa;
+            margin-top: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .recipe-meta span {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .cooking-instructions ol {
+            color: #ccc;
+            padding-left: 1.5rem;
+            line-height: 1.6;
+        }
+
+        .cooking-instructions li {
+            margin-bottom: 1rem;
+        }
+
+        .serving-suggestions p {
+            color: #ccc;
+            line-height: 1.6;
+        }
+
+        /* Error message styles */
+        .error-message {
+            color: var(--primary-color);
+            text-align: center;
+            font-size: 1.2rem;
+            padding: 1rem;
+            background: rgba(255, 107, 26, 0.1);
+            backdrop-filter: blur(5px);
+            border-radius: 8px;
+            animation: shake 0.5s ease-in-out;
+        }
+
+        /* Animations */
+        @keyframes headerSlideDown {
+            from {
+                transform: translateY(-100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(20px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes cardAppear {
+            from {
+                transform: scale(0.8);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+
+        /* Placeholder styles */
+        ::placeholder {
+            color: #888;
+        }
+
+        /* Scrollbar styling for the cards */
+        .alternative-card:hover {
+            overflow-y: auto;
+            max-height: 80vh;
+        }
+
+        .alternative-card::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .alternative-card::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+        }
+
+        .alternative-card::-webkit-scrollbar-thumb {
+            background: var(--primary-color);
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <span class="emoji"></span>
+        <h2>Make Unhealthy Healthy</h2>
+        <span class="emoji"></span>
+    </div>
+    
+    <div class="container">
+        <div class="search-bar">
+            <input 
+                type="text" 
+                id="search-input" 
+                placeholder="Enter a dish to find healthy alternatives... 🍽️"
+            >
+            <button onclick="searchRecipes()">
+                <span class="search-icon">🔍</span>
+                Find Alternatives
+            </button>
+        </div>
+        <div id="results" class="results"></div>
+    </div>
+
+    <script>
+        async function searchRecipes() {
+            const searchInput = document.getElementById('search-input').value;
+            const results = document.getElementById('results');
+
+            // Remove show class to trigger fade out
+            results.classList.remove('show');
+
+            // Check if input is not empty
+            if (searchInput.trim() === '') {
+                showError("Please enter a dish name.");
+                return;
+            }
+
+            try {
+                // Show loading state
+                results.innerHTML = '<div class="loading"><center>Searching for healthy alternatives... 🔍</center></div>';
+                results.classList.add('show');
+
+                // Send a POST request to the find_alternatives endpoint
+                const response = await fetch('/find_alternatives', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ food_item: searchInput })
+                });
+
+                const data = await response.json();
+
+                // Clear previous results
+                results.innerHTML = '';
+
+                // If success, display alternatives
+                if (data.success && data.alternatives) {
+                    // Add mock data for demonstration purposes
+                    const enhancedAlternatives = data.alternatives.map(alt => {
+                        return {
+                            ...alt,
+                            cookTime: Math.floor(Math.random() * 30) + 15 + " mins",
+                            prepTime: Math.floor(Math.random() * 20) + 10 + " mins",
+                            servings: Math.floor(Math.random() * 4) + 2,
+                            ingredients: [
+                                "2 tbsp extra virgin olive oil",
+                                "1 cup of quinoa or brown rice, rinsed",
+                                "2 cups vegetable or chicken broth",
+                                "1 tsp sea salt",
+                                "1/2 tsp black pepper",
+                                "1 tsp dried herbs (oregano, thyme, or rosemary)",
+                                "Fresh herbs to taste (parsley, cilantro, or basil)",
+                                "Lemon wedges for serving"
+                            ],
+                            instructions: [
+                                "Prepare all ingredients by washing and chopping them appropriately.",
+                                "Heat olive oil in a large pan over medium heat.",
+                                "Add onions and sauté until translucent, about 3-4 minutes.",
+                                "Add garlic and cook for another minute until fragrant.",
+                                "Add vegetables and sauté until tender, about 5-7 minutes.",
+                                "In a separate pot, cook quinoa or rice according to package instructions, using broth instead of water for extra flavor.",
+                                "Once cooked, fluff the grains with a fork and let cool slightly.",
+                                "Combine the sautéed vegetables with the cooked grains.",
+                                "Season with salt, pepper, and dried herbs. Mix well.",
+                                "Garnish with fresh herbs before serving.",
+                                "Serve with lemon wedges on the side."
+                            ],
+                            serving: [
+                                "Serve as a main dish with a side of steamed greens",
+                                "Pair with a simple green salad dressed with lemon and olive oil",
+                                "For a complete meal, add a protein like grilled chicken or baked tofu",
+                                "Accompany with warm whole grain bread for a hearty dinner",
+                                "Finish the meal with fresh fruit for dessert"
+                            ]
+                        };
+                    });
+                    
+                    const content = `
+                        <h3>Healthy Alternatives for ${searchInput}</h3>
+                        <div class="alternatives-container">
+                            ${enhancedAlternatives.map(alt => createAlternativeCard(alt)).join('')}
+                        </div>
+                    `;
+                    results.innerHTML = content;
+                } else {
+                    showError("No alternatives found. Please try again.");
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showError("An error occurred while fetching alternatives. Please try again.");
+            }
+
+            // Add show class to trigger fade in
+            results.classList.add('show');
+        }
+
+        function createAlternativeCard(alternative) {
+            // Detailed vegetables list for more specific ingredients
+            const detailedVegetables = [
+                "1 medium yellow onion, finely diced",
+                "2 medium tomatoes, diced",
+                "1 red bell pepper, sliced into thin strips",
+                "1 cup baby spinach, washed and dried",
+                "½ cup fresh cilantro, chopped",
+                "¼ cup fresh mint leaves, torn",
+                "2 green onions, thinly sliced",
+                "1 medium carrot, julienned",
+                "1 small zucchini, diced",
+                "½ cup broccoli florets, cut small",
+                "2 cloves garlic, minced",
+                "1 inch piece ginger, grated",
+                "½ cucumber, seeded and diced",
+                "¼ cup parsley, finely chopped"
+            ];
+            
+            // Combine detailed vegetables with remaining ingredients
+            const combinedIngredients = [...detailedVegetables, ...alternative.ingredients];
+            
+            return `
+                <div class="alternative-card">
+                    <h3>${alternative.name}</h3>
+                    <p class="description">${alternative.description}</p>
+                    
+                    <div class="recipe-meta">
+                        <span>⏱️ Cook time: ${alternative.cookTime}</span>
+                        <span>⌛ Prep time: ${alternative.prepTime}</span>
+                        <span>🍽️ Servings: ${alternative.servings}</span>
+                    </div>
+                    
+                    <div class="nutrition-info">
+                        <h4>📊 Nutritional Information</h4>
+                        <ul>
+                            <li>🔥 Calories: ${alternative.nutritionalInfo.calories} kcal</li>
+                            <li>🥩 Protein: ${alternative.nutritionalInfo.protein}g</li>
+                            <li>🌾 Carbs: ${alternative.nutritionalInfo.carbs}g</li>
+                            <li>🥑 Fats: ${alternative.nutritionalInfo.fats}g</li>
+                            <li>⚡ Energy: ${alternative.nutritionalInfo.energy} kJ</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="ingredients-list">
+                        <h4>🛒 Ingredients</h4>
+                        <ul>
+                            ${combinedIngredients.map(ingredient => `<li>🥄 ${ingredient}</li>`).join('')}
+                        </ul>
+                    </div>
+                    
+                    <div class="cooking-instructions">
+                        <h4>👩‍🍳 Cooking Instructions</h4>
+                        <ol>
+                            ${alternative.instructions.map(step => `<li>${step}</li>`).join('')}
+                        </ol>
+                    </div>
+                    
+                    <div class="serving-suggestions">
+                        <h4>🍽️ Serving Suggestions</h4>
+                        <ul>
+                            ${alternative.serving.map(suggestion => `<li>🍴 ${suggestion}</li>`).join('')}
+                        </ul>
+                    </div>
+                </div>
+            `;
+        }
+
+        function showError(message) {
+            const results = document.getElementById('results');
+            results.innerHTML = `<p class="error-message">${message}</p>`;
+            results.classList.add('show');
+        }
+
+        // Add event listener for Enter key on search input
+        document.getElementById('search-input').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                searchRecipes();
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Personalized Food Recommendations</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #222;
+            color: #eee;
+        }
+
+        header {
+            background-color: #333;
+            padding: 1rem;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #FFA500;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            padding: 0;
+        }
+
+        nav li {
+            margin-right: 1rem;
+        }
+
+        nav a {
+            color: #eee;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        nav a:hover {
+            color: #FFA500;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-links {
+            display: flex;
+        }
+
+        .main-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        h1, h2, h3 {
+            color: #FFA500;
+        }
+
+        .recommendation-section {
+            margin: 20px auto;
+            border: 1px solid #555;
+            padding: 20px;
+            background-color: #333;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 800px;
+            text-align: left;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .recommendation-section:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+        }
+
+        .search-container {
+            margin: 2rem auto;
+            max-width: 600px;
+        }
+
+        input[type="text"] {
+            padding: 12px;
+            border: 1px solid #555;
+            border-radius: 4px;
+            background-color: #444;
+            color: #eee;
+            width: 70%;
+            max-width: 400px;
+            margin-right: 10px;
+            transition: all 0.3s ease;
+        }
+
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #FFA500;
+            box-shadow: 0 0 8px rgba(255, 165, 0, 0.6);
+        }
+
+        button {
+            padding: 12px 20px;
+            background-color: #FFA500;
+            color: #222;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #FF8C00;
+            transform: scale(1.05);
+        }
+
+        button:active {
+            transform: scale(0.98);
+        }
+
+        ul {
+            list-style-type: disc;
+            padding-left: 20px;
+        }
+
+        li {
+            margin-bottom: 8px;
+            line-height: 1.5;
+        }
+
+        #recommendationResults {
+            margin-top: 2rem;
+        }
+
+        #loading {
+            display: none;
+            text-align: center;
+            margin: 2rem auto;
+            font-size: 24px;
+            color: #FFA500;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        #loading::after {
+            content: '⟳';
+            display: inline-block;
+            animation: spin 1s linear infinite;
+        }
+
+        .food-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 10px;
+        }
+
+        .food-item {
+            background-color: #444;
+            padding: 10px;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+        }
+
+        .food-item:hover {
+            background-color: #555;
+            transform: translateY(-3px);
+        }
+
+        .section-header {
+            border-bottom: 2px solid #FFA500;
+            padding-bottom: 8px;
+            margin-bottom: 15px;
+        }
+
+        footer {
+            background-color: #333;
+            text-align: center;
+            padding: 1rem;
+            margin-top: 2rem;
+            color: #888;
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .search-container {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            input[type="text"] {
+                width: 90%;
+                margin-bottom: 10px;
+                margin-right: 0;
+            }
+            
+            .food-list {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="logo">SWAPWELL</div>
+        <nav>
+            <ul class="nav-links">
+                <li><a href="/">Home</a></li>
+                <li><a href="about.html">About</a></li>
+                <li><a href="./recipe">Share Recipes</a></li>
+                <li><a href="food.html">Food</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="main-content">
+        <h1>Personalized Health-Based Food Recommendations</h1>
+        <p>Enter your health concern below to receive personalized food recommendations.</p>
+
+        <div class="search-container">
+            <input type="text" id="healthConcern" placeholder="Enter your health concern (e.g., High Blood Pressure, Diabetes)">
+            <button onclick="getRecommendations()">Get Recommendations</button>
+        </div>
+
+        <div id="loading">Loading recommendations...</div>
+
+        <div id="recommendationResults">
+            <!-- Sections to display recommendations will be added here -->
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2025 SWAPWELL. All rights reserved.</p>
+    </footer>
+
+    <script>
+        async function getRecommendations() {
+            const healthConcern = document.getElementById("healthConcern").value;
+            if (!healthConcern) {
+                alert("Please enter a health concern.");
+                return;
+            }
+
+            // Show loading symbol
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('recommendationResults').innerHTML = ''; // Clear previous results
+
+            try {
+                const response = await fetch('/get_health_recommendations', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ health_conditions: healthConcern })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
+
+                // Hide loading symbol
+                document.getElementById('loading').style.display = 'none';
+
+                const resultsDiv = document.getElementById("recommendationResults");
+
+                if (data.success) {
+                    const recommendations = data.recommendations;
+
+                    for (const condition in recommendations) {
+                        if (recommendations.hasOwnProperty(condition)) {
+                            const conditionData = recommendations[condition];
+
+                            const section = document.createElement('div');
+                            section.classList.add('recommendation-section');
+
+                            const title = document.createElement('h2');
+                            title.textContent = `Recommendations for ${condition}`;
+                            section.appendChild(title);
+
+                            // Foods to Avoid
+                            const avoidHeader = document.createElement('h3');
+                            avoidHeader.textContent = 'Foods to Avoid:';
+                            avoidHeader.classList.add('section-header');
+                            section.appendChild(avoidHeader);
+                            
+                            const avoidList = document.createElement('div');
+                            avoidList.classList.add('food-list');
+                            if (conditionData.foods_to_avoid && Array.isArray(conditionData.foods_to_avoid) && conditionData.foods_to_avoid.length > 0) {
+                                conditionData.foods_to_avoid.forEach(food => {
+                                    const foodItem = document.createElement('div');
+                                    foodItem.classList.add('food-item');
+                                    foodItem.textContent = food;
+                                    avoidList.appendChild(foodItem);
+                                });
+                            } else {
+                                const foodItem = document.createElement('div');
+                                foodItem.classList.add('food-item');
+                                foodItem.textContent = "No specific foods to avoid found.";
+                                avoidList.appendChild(foodItem);
+                            }
+                            section.appendChild(avoidList);
+
+                            // Recommended Foods
+                            const recommendHeader = document.createElement('h3');
+                            recommendHeader.textContent = 'Recommended Foods:';
+                            recommendHeader.classList.add('section-header');
+                            section.appendChild(recommendHeader);
+                            
+                            const recommendList = document.createElement('div');
+                            recommendList.classList.add('food-list');
+                            if (conditionData.recommended_foods && Array.isArray(conditionData.recommended_foods) && conditionData.recommended_foods.length > 0) {
+                                conditionData.recommended_foods.forEach(food => {
+                                    const foodItem = document.createElement('div');
+                                    foodItem.classList.add('food-item');
+                                    foodItem.textContent = food;
+                                    recommendList.appendChild(foodItem);
+                                });
+                            } else {
+                                const foodItem = document.createElement('div');
+                                foodItem.classList.add('food-item');
+                                foodItem.textContent = "No specific recommended foods found.";
+                                recommendList.appendChild(foodItem);
+                            }
+                            section.appendChild(recommendList);
+
+                            // Dietary Approach Description
+                            const descriptionHeader = document.createElement('h3');
+                            descriptionHeader.textContent = 'Dietary Approach Description:';
+                            descriptionHeader.classList.add('section-header');
+                            section.appendChild(descriptionHeader);
+                            
+                            const descriptionPara = document.createElement('p');
+                            descriptionPara.textContent = conditionData.description || "No description provided.";
+                            descriptionPara.style.lineHeight = "1.6";
+                            descriptionPara.style.marginBottom = "20px";
+                            section.appendChild(descriptionPara);
+
+                            resultsDiv.appendChild(section);
+                        }
+                    }
+                } else {
+                    const errorSection = document.createElement('div');
+                    errorSection.classList.add('recommendation-section');
+                    const errorPara = document.createElement('p');
+                    errorPara.textContent = `Error: ${data.error || "Unable to get recommendations. Please try again."}`;
+                    errorSection.appendChild(errorPara);
+                    resultsDiv.appendChild(errorSection);
+                }
+            } catch (error) {
+                document.getElementById('loading').style.display = 'none';
+                const resultsDiv = document.getElementById("recommendationResults");
+                const errorSection = document.createElement('div');
+                errorSection.classList.add('recommendation-section');
+                const errorPara = document.createElement('p');
+                errorPara.textContent = `An error occurred: ${error.message}. Please try again later.`;
+                errorSection.appendChild(errorPara);
+                resultsDiv.appendChild(errorSection);
+                console.error('Error:', error);
+            }
+        }
+    </script>
+</body>
+</html>

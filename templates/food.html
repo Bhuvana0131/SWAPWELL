@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SwapWell - Homepage</title>
+  <style>
+    /* Root Variables */
+    :root {
+      --primary-color: #ff6600;
+      --secondary-color: #ff6347;
+      --hover-color: #ffa20c;
+      --text-light: #c0c2c4;
+      --background: #383232;
+      --white: #383232;
+    }
+
+    /* Reset and Base Styles */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Arial', sans-serif;
+      background-color: var(--background);
+      line-height: 1.6;
+    }
+
+    /* Header Styles */
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 5%;
+      background-color: var(--white);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    .logo {
+      font-size: 2rem;
+      font-weight: bold;
+      color: var(--primary-color);
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+    }
+
+    /* Navigation Styles */
+    .nav-links {
+      display: flex;
+      gap: 2rem;
+      list-style: none;
+      align-items: center;
+    }
+
+    .nav-links li {
+      background-color: var(--primary-color);
+      border-radius: 5px;
+      transition: background-color 0.3s ease;
+    }
+
+    .nav-links a {
+      text-decoration: none;
+      color: white;
+      padding: 0.5rem 1rem;
+      display: block;
+      font-weight: 500;
+    }
+
+    .nav-links li:hover {
+      background-color: var(--hover-color);
+    }
+
+    /* Categories Section Styles */
+    .categories {
+      padding: 4rem 5%;
+      text-align: center;
+    }
+
+    .categories h2 {
+      color: var(--text-light);
+      margin-bottom: 3rem;
+      font-size: 2.5rem;
+    }
+
+    .category-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 2rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .centered-categories {
+      margin-top: 2rem;
+      grid-template-columns: repeat(2, minmax(280px, 1fr));
+      max-width: 800px;
+    }
+
+    .category {
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 15px;
+      padding: 1.5rem;
+      transition: transform 0.3s ease;
+    }
+
+    .category:hover {
+      transform: translateY(-5px);
+    }
+
+    .category img {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+      border-radius: 10px;
+      margin-bottom: 1rem;
+    }
+
+    .category h3 {
+      color: var(--primary-color);
+      margin: 1rem 0;
+      font-size: 1.5rem;
+    }
+
+    .category p {
+      color: var(--text-light);
+      margin-bottom: 1.5rem;
+      min-height: 100px;
+    }
+
+    .explore-btn {
+      display: inline-block;
+      background-color: var(--secondary-color);
+      color: white;
+      padding: 0.8rem 1.5rem;
+      border-radius: 5px;
+      text-decoration: none;
+      transition: background-color 0.3s ease;
+    }
+
+    .explore-btn:hover {
+      background-color: var(--hover-color);
+    }
+
+    /* Contact Section Styles */
+    .contact {
+      text-align: center;
+      padding: 3rem 5%;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .contact h2 {
+      color: var(--text-light);
+      margin-bottom: 1rem;
+    }
+
+    .contact p {
+      color: var(--text-light);
+    }
+
+    /* Footer Styles */
+    footer {
+      text-align: center;
+      padding: 1.5rem;
+      color: var(--text-light);
+      background-color: rgba(0, 0, 0, 0.2);
+    }
+
+    /* Mobile Navigation Styles */
+    .nav-toggle {
+      display: none;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 0.5rem;
+    }
+
+    .nav-toggle span {
+      display: block;
+      width: 25px;
+      height: 3px;
+      background-color: var(--primary-color);
+      margin: 5px 0;
+      transition: 0.3s;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      .header {
+        flex-direction: column;
+        padding: 1rem;
+      }
+
+      .nav-toggle {
+        display: block;
+        position: absolute;
+        right: 1rem;
+        top: 1rem;
+      }
+
+      nav {
+        display: none;
+        width: 100%;
+      }
+
+      nav.active {
+        display: block;
+      }
+
+      .nav-links {
+        flex-direction: column;
+        margin-top: 1rem;
+        gap: 1rem;
+      }
+
+      .category-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .centered-categories {
+        grid-template-columns: 1fr;
+        max-width: 100%;
+      }
+
+      .category {
+        max-width: 100%;
+      }
+
+      .nav-toggle[aria-expanded="true"] span:nth-child(1) {
+        transform: rotate(45deg) translate(5px, 5px);
+      }
+
+      .nav-toggle[aria-expanded="true"] span:nth-child(2) {
+        opacity: 0;
+      }
+
+      .nav-toggle[aria-expanded="true"] span:nth-child(3) {
+        transform: rotate(-45deg) translate(7px, -7px);
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <header class="header">
+    <div class="logo">SWAPWELL</div>
+    <button class="nav-toggle" aria-expanded="false" aria-label="Toggle navigation">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+    <nav>
+      <ul class="nav-links">
+        <li><a href="/">Home</a></li>
+        <li><a href="about.html">About</a></li>
+        <li><a href="recipe.html">Share Recipes</a></li>
+        <li><a href="morerecipe.html">View Recipes</a></li>
+      </ul>
+    </nav>
+  </header>
+  
+  <!-- Food Categories -->
+  <section class="categories">
+    <h2>Healthy Companions</h2>
+    <div class="category-grid">
+      <div class="category">
+        <img src="../static/assets/img08.jpg" alt="Recipe Generator">
+        <h3>Recipe Generator</h3>
+        <p>"Got ingredients but no recipe? Our Recipe Generator turns your pantry staples 
+          into delicious meals with step-by-step instructions. 
+          Start cooking masterpieces today!"</p>
+        <a href="./AI" class="explore-btn">Explore Now</a>
+      </div>
+      <div class="category">
+        <img src="../static/assets/img11.jpg" alt="FoodSwap">
+        <h3>Food Swap</h3>
+        <p>"Eat healthier with our Food Swap! Replace ingredients with healthier alternatives while keeping the taste you love.
+           Make every meal nourishing and delicious today!"</p>
+        <a href="/foodswap" class="explore-btn">Explore Now</a>
+      </div>
+      <div class="category">
+        <img src="../static/assets/img05.jpg" alt="Alternate Recipes">
+        <h3>Alternate Recipes</h3>
+        <p>"Switch up your meals with our Alternate Recipe Finder! Discover fresh twists, healthier swaps, and step-by-step recipes with ingredients and nutritional facts. 
+          Enjoy exciting new dishes today!"</p>
+        <a href="/altrecp" class="explore-btn">Explore Now</a>
+      </div>
+    </div>
+    <div class="category-grid centered-categories">
+      <div class="category">
+        <img src="../static/assets/Junk Food.jpg" alt="Foods to Avoid">
+        <h3>Foods to avoid</h3>
+        <p>"Discover which foods you should avoid based on your health conditions. Get personalized recommendations for a healthier lifestyle and learn about better alternatives."</p>
+        <a href="./avoidfoods" class="explore-btn">Explore Now</a>
+      </div>
+      <div class="category">
+        <img src="../static/assets/nutrical.jpg" alt="Nutrition Calculator" onerror="this.src='../static/assets/img08.jpg'">
+        <h3>Nutrition Calculator</h3>
+        <p>"Get detailed nutritional information for any food item. Learn about calories, macronutrients, health benefits, and proper consumption guidelines. Upload a food image or search by name!"</p>
+        <a href="nutrical.html" class="explore-btn">Explore Now</a>
+      </div>
+    </div>
+  </section>
+
+  <section id="contact" class="contact">
+    <h2>Contact Us</h2>
+    <p>If you have any questions or suggestions, feel free to reach out!<br>
+      Email: swapwell2025@gmail.com
+    </p>
+  </section>
+
+  <footer>
+    <p>&copy; 2025 SWAPWELL. All rights reserved.</p>
+  </footer>
+
+  <script>
+    // Mobile navigation toggle
+    const navToggle = document.querySelector('.nav-toggle');
+    const nav = document.querySelector('nav');
+
+    navToggle.addEventListener('click', () => {
+      const isExpanded = navToggle.getAttribute('aria-expanded') === 'true';
+      navToggle.setAttribute('aria-expanded', !isExpanded);
+      nav.classList.toggle('active');
+    });
+
+    // Category exploration
+    document.querySelectorAll('.explore-btn').forEach(button => {
+      button.addEventListener('click', (e) => {
+        console.log('Exploring category:', e.target.parentElement.querySelector('h3').textContent);
+      });
+    });
+  </script>
+</body>
+</html>

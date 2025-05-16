@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nutritional Calculator</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #222;
+      color: #eee;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+
+    h1, h2, h3 {
+      color: #FFA500;
+      text-align: center;
+    }
+
+    .search-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin: 2rem 0;
+    }
+
+    .search-box {
+      display: flex;
+      width: 100%;
+      max-width: 600px;
+      margin-bottom: 1rem;
+    }
+
+    input[type="text"] {
+      flex: 1;
+      padding: 12px;
+      border: 1px solid #555;
+      border-radius: 4px 0 0 4px;
+      background-color: #444;
+      color: #eee;
+      transition: all 0.3s ease;
+    }
+
+    input[type="text"]:focus {
+      outline: none;
+      border-color: #FFA500;
+      box-shadow: 0 0 8px rgba(255, 165, 0, 0.6);
+    }
+
+    .search-btn {
+      padding: 12px 20px;
+      background-color: #FFA500;
+      color: #222;
+      border: none;
+      border-radius: 0 4px 4px 0;
+      cursor: pointer;
+      font-weight: bold;
+      transition: all 0.3s ease;
+    }
+
+    .search-btn:hover {
+      background-color: #FF8C00;
+    }
+
+    .or-divider {
+      display: flex;
+      align-items: center;
+      margin: 1rem 0;
+      width: 100%;
+      max-width: 600px;
+    }
+
+    .or-divider::before,
+    .or-divider::after {
+      content: "";
+      flex: 1;
+      border-bottom: 1px solid #555;
+    }
+
+    .or-divider span {
+      padding: 0 1rem;
+      color: #999;
+    }
+
+    .upload-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+      max-width: 600px;
+    }
+
+    .file-input-wrapper {
+      position: relative;
+      width: 100%;
+      margin-bottom: 1rem;
+    }
+
+    .file-input {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0;
+      cursor: pointer;
+    }
+
+    .file-input-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      padding: 12px;
+      background-color: #333;
+      border: 1px dashed #555;
+      border-radius: 4px;
+      color: #eee;
+      transition: all 0.3s ease;
+    }
+
+    .file-input-btn:hover {
+      background-color: #444;
+      border-color: #FFA500;
+    }
+
+    .file-input-btn i {
+      margin-right: 8px;
+    }
+
+    .selected-file {
+      margin-top: 0.5rem;
+      font-size: 0.9rem;
+      color: #999;
+    }
+
+    .upload-btn {
+      width: 100%;
+      padding: 12px;
+      background-color: #FFA500;
+      color: #222;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: all 0.3s ease;
+    }
+
+    .upload-btn:hover {
+      background-color: #FF8C00;
+      transform: translateY(-2px);
+    }
+
+    .upload-btn:active {
+      transform: translateY(1px);
+    }
+
+    #nutritionResults {
+      margin-top: 2rem;
+    }
+
+    .nutrition-card {
+      background-color: #333;
+      border-radius: 8px;
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .nutrition-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    }
+
+    .food-header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .food-image {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      object-fit: cover;
+      margin-right: 1rem;
+      border: 2px solid #FFA500;
+    }
+
+    .food-title h2 {
+      margin: 0 0 0.5rem 0;
+      font-size: 1.8rem;
+      text-align: left;
+    }
+
+    .food-title p {
+      margin: 0;
+      color: #999;
+      font-size: 0.9rem;
+    }
+
+    .nutrition-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .nutrition-item {
+      background-color: #444;
+      padding: 1rem;
+      border-radius: 4px;
+      text-align: center;
+      transition: all 0.3s ease;
+    }
+
+    .nutrition-item:hover {
+      background-color: #555;
+      transform: translateY(-3px);
+    }
+
+    .nutrition-item h4 {
+      margin: 0 0 0.5rem 0;
+      color: #FFA500;
+    }
+
+    .nutrition-item p {
+      margin: 0;
+      font-size: 1.2rem;
+      font-weight: bold;
+    }
+
+    .nutrition-item span {
+      display: block;
+      font-size: 0.8rem;
+      color: #999;
+      margin-top: 0.25rem;
+    }
+
+    .section-title {
+      position: relative;
+      padding-bottom: 0.5rem;
+      margin: 2rem 0 1rem 0;
+      font-size: 1.4rem;
+    }
+
+    .section-title::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      width: 50px;
+      height: 3px;
+      background-color: #FFA500;
+    }
+
+    .benefits-list,
+    .consumption-list {
+      list-style: none;
+      padding: 0;
+    }
+
+    .benefits-list li,
+    .consumption-list li {
+      position: relative;
+      padding-left: 1.5rem;
+      margin-bottom: 0.75rem;
+      line-height: 1.6;
+    }
+
+    .benefits-list li::before {
+      content: "•";
+      position: absolute;
+      left: 0;
+      color: #FFA500;
+      font-weight: bold;
+    }
+
+    .loading {
+      display: none;
+      text-align: center;
+      margin: 2rem 0;
+    }
+
+    .loading-spinner {
+      display: inline-block;
+      width: 50px;
+      height: 50px;
+      border: 3px solid rgba(255, 165, 0, 0.3);
+      border-radius: 50%;
+      border-top-color: #FFA500;
+      animation: spin 1s ease-in-out infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .error-message {
+      color: #FF6B6B;
+      text-align: center;
+      padding: 1rem;
+      background-color: rgba(255, 107, 107, 0.1);
+      border-radius: 4px;
+      margin: 1rem 0;
+    }
+
+    @media (max-width: 768px) {
+      .nutrition-grid {
+        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+      }
+      
+      .food-header {
+        flex-direction: column;
+        text-align: center;
+      }
+      
+      .food-image {
+        margin-right: 0;
+        margin-bottom: 1rem;
+      }
+      
+      .food-title h2 {
+        text-align: center;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Nutrition Calculator</h1>
+    <p class="subtitle" style="text-align: center; color: #999;">Discover detailed nutritional information, benefits, and consumption guidelines for any food item</p>
+    
+    <div class="search-container">
+      <div class="search-box">
+        <input type="text" id="foodSearchInput" placeholder="Search for a food item (e.g., apple, chicken breast, quinoa)">
+        <button class="search-btn" onclick="searchFood()">
+          <i class="fas fa-search"></i> Search
+        </button>
+      </div>
+      
+      <div class="or-divider">
+        <span>OR</span>
+      </div>
+      
+      <div class="upload-container">
+        <div class="file-input-wrapper">
+          <input type="file" id="foodImageUpload" class="file-input" accept="image/*" onchange="handleFileSelect(event)">
+          <div class="file-input-btn">
+            <i class="fas fa-camera"></i> Upload food image
+          </div>
+        </div>
+        <div class="selected-file" id="selectedFileName"></div>
+        <button class="upload-btn" onclick="uploadFoodImage()" id="uploadButton" disabled>
+          <i class="fas fa-upload"></i> Identify Food & Get Nutrition Info
+        </button>
+      </div>
+    </div>
+    
+    <div class="loading" id="loadingIndicator">
+      <div class="loading-spinner"></div>
+      <p>Analyzing your food...</p>
+    </div>
+    
+    <div id="errorMessage" class="error-message" style="display:none;"></div>
+    
+    <div id="nutritionResults"></div>
+  </div>
+  
+  <script src="https://kit.fontawesome.com/your-fontawesome-kit.js" crossorigin="anonymous"></script>
+  <script>
+    let selectedFile = null;
+    
+    function handleFileSelect(event) {
+      selectedFile = event.target.files[0];
+      const selectedFileName = document.getElementById('selectedFileName');
+      const uploadButton = document.getElementById('uploadButton');
+      
+      if (selectedFile) {
+        selectedFileName.textContent = selectedFile.name;
+        uploadButton.disabled = false;
+      } else {
+        selectedFileName.textContent = '';
+        uploadButton.disabled = true;
+      }
+    }
+    
+    async function searchFood() {
+      const foodName = document.getElementById('foodSearchInput').value.trim();
+      
+      if (!foodName) {
+        showError('Please enter a food item to search');
+        return;
+      }
+      
+      showLoading();
+      clearError();
+      
+      try {
+        const response = await fetch('/get_nutrition_info', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ food_name: foodName })
+        });
+        
+        if (!response.ok) {
+          throw new Error('Failed to get nutrition information');
+        }
+        
+        const data = await response.json();
+        hideLoading();
+        
+        if (data.success) {
+          displayNutritionInfo(data.nutrition_info);
+        } else {
+          showError(data.error || 'Could not find nutrition information for this food');
+        }
+      } catch (error) {
+        hideLoading();
+        showError(error.message);
+      }
+    }
+    
+    async function uploadFoodImage() {
+      if (!selectedFile) {
+        showError('Please select an image to upload');
+        return;
+      }
+      
+      showLoading();
+      clearError();
+      
+      const formData = new FormData();
+      formData.append('food_image', selectedFile);
+      
+      try {
+        const response = await fetch('/identify_food', {
+          method: 'POST',
+          body: formData
+        });
+        
+        if (!response.ok) {
+          throw new Error('Failed to identify food from image');
+        }
+        
+        const data = await response.json();
+        hideLoading();
+        
+        if (data.success) {
+          // Update the search input with the identified food
+          document.getElementById('foodSearchInput').value = data.food_name;
+          // Now get nutrition info for the identified food
+          await searchFood();
+        } else {
+          showError(data.error || 'Could not identify food in the image');
+        }
+      } catch (error) {
+        hideLoading();
+        showError(error.message);
+      }
+    }
+    
+    function displayNutritionInfo(nutritionInfo) {
+      const resultsDiv = document.getElementById('nutritionResults');
+      resultsDiv.innerHTML = '';
+      
+      const card = document.createElement('div');
+      card.classList.add('nutrition-card');
+      
+      // Food header with image and title
+      const foodHeader = document.createElement('div');
+      foodHeader.classList.add('food-header');
+      
+     
+     
+      
+      const foodTitle = document.createElement('div');
+      foodTitle.classList.add('food-title');
+      
+      const titleElement = document.createElement('h2');
+      titleElement.textContent = nutritionInfo.name;
+      foodTitle.appendChild(titleElement);
+      
+      const servingSize = document.createElement('p');
+      servingSize.textContent = `Serving size: ${nutritionInfo.serving_size} (${nutritionInfo.serving_weight}g)`;
+      foodTitle.appendChild(servingSize);
+      
+      foodHeader.appendChild(foodTitle);
+      card.appendChild(foodHeader);
+      
+      // Nutrition grid
+      const nutritionGrid = document.createElement('div');
+      nutritionGrid.classList.add('nutrition-grid');
+      
+      const nutrientItems = [
+        { label: 'Calories', value: nutritionInfo.calories, unit: 'kcal' },
+        { label: 'Protein', value: nutritionInfo.protein, unit: 'g' },
+        { label: 'Carbs', value: nutritionInfo.carbohydrates, unit: 'g' },
+        { label: 'Fat', value: nutritionInfo.fat, unit: 'g' },
+        { label: 'Fiber', value: nutritionInfo.fiber, unit: 'g' },
+        { label: 'Sugar', value: nutritionInfo.sugar, unit: 'g' },
+        { label: 'Sodium', value: nutritionInfo.sodium, unit: 'mg' },
+        { label: 'Potassium', value: nutritionInfo.potassium, unit: 'mg' }
+      ];
+      
+      nutrientItems.forEach(item => {
+        const nutrientItem = document.createElement('div');
+        nutrientItem.classList.add('nutrition-item');
+        
+        const nutrientTitle = document.createElement('h4');
+        nutrientTitle.textContent = item.label;
+        nutrientItem.appendChild(nutrientTitle);
+        
+        const nutrientValue = document.createElement('p');
+        nutrientValue.textContent = item.value;
+        nutrientItem.appendChild(nutrientValue);
+        
+        const nutrientUnit = document.createElement('span');
+        nutrientUnit.textContent = item.unit;
+        nutrientItem.appendChild(nutrientUnit);
+        
+        nutritionGrid.appendChild(nutrientItem);
+      });
+      
+      card.appendChild(nutritionGrid);
+      
+      // Benefits section
+      const benefitsTitle = document.createElement('h3');
+      benefitsTitle.classList.add('section-title');
+      benefitsTitle.textContent = 'Health Benefits';
+      card.appendChild(benefitsTitle);
+      
+      const benefitsList = document.createElement('ul');
+      benefitsList.classList.add('benefits-list');
+      
+      nutritionInfo.benefits.forEach(benefit => {
+        const benefitItem = document.createElement('li');
+        benefitItem.textContent = benefit;
+        benefitsList.appendChild(benefitItem);
+      });
+      
+      card.appendChild(benefitsList);
+      
+      // Consumption guidelines section
+      const consumptionTitle = document.createElement('h3');
+      consumptionTitle.classList.add('section-title');
+      consumptionTitle.textContent = 'Consumption Guidelines';
+      card.appendChild(consumptionTitle);
+      
+      const consumptionList = document.createElement('ul');
+      consumptionList.classList.add('consumption-list');
+      
+      const whenToConsume = document.createElement('li');
+      whenToConsume.textContent = `When to consume: ${nutritionInfo.when_to_consume}`;
+      consumptionList.appendChild(whenToConsume);
+      
+      const howToConsume = document.createElement('li');
+      howToConsume.textContent = `How to consume: ${nutritionInfo.how_to_consume}`;
+      consumptionList.appendChild(howToConsume);
+      
+      const dailyRecommendation = document.createElement('li');
+      dailyRecommendation.textContent = `Daily recommendation: ${nutritionInfo.daily_recommendation}`;
+      consumptionList.appendChild(dailyRecommendation);
+      
+      card.appendChild(consumptionList);
+      
+      resultsDiv.appendChild(card);
+    }
+    
+    function showLoading() {
+      document.getElementById('loadingIndicator').style.display = 'block';
+      document.getElementById('nutritionResults').innerHTML = '';
+    }
+    
+    function hideLoading() {
+      document.getElementById('loadingIndicator').style.display = 'none';
+    }
+    
+    function showError(message) {
+      const errorDiv = document.getElementById('errorMessage');
+      errorDiv.textContent = message;
+      errorDiv.style.display = 'block';
+    }
+    
+    function clearError() {
+      document.getElementById('errorMessage').style.display = 'none';
+    }
+  </script>
+</body>
+</html>

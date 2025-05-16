@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Recipes Display</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f2f2f2;
+      margin: 0;
+      padding: 0;
+      line-height: 1.6;
+    }
+    
+    header {
+      background: #343232;
+      color: #ff8000;
+      padding: 20px;
+      text-align: center;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+    
+    .container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      padding: 20px;
+      gap: 20px;
+    }
+    
+    .card {
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      padding: 20px;
+      width: 350px;
+      height: 500px; /* Fixed height */
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden; /* Hide overflow content */
+    }
+    
+    .card h2 {
+      margin-top: 0;
+      color: #343232;
+      border-bottom: 2px solid #ff8000;
+      padding-bottom: 10px;
+      position: sticky;
+      top: 0;
+      background: #fff;
+      z-index: 1;
+    }
+    
+    .card-content {
+      flex: 1;
+      overflow-y: auto; /* Add scrolling to content */
+      padding-right: 10px; /* Space for scrollbar */
+    }
+    
+    /* Webkit scrollbar styling */
+    .card-content::-webkit-scrollbar {
+      width: 6px;
+    }
+    
+    .card-content::-webkit-scrollbar-track {
+      background: #f1f1f1;
+      border-radius: 3px;
+    }
+    
+    .card-content::-webkit-scrollbar-thumb {
+      background: #ff8000;
+      border-radius: 3px;
+    }
+    
+    .card-section {
+      margin: 15px 0;
+    }
+    
+    .card-section h3 {
+      color: #ff8000;
+      margin-bottom: 10px;
+      position: sticky;
+      top: 0;
+      background: #fff;
+      padding: 5px 0;
+      z-index: 1;
+    }
+    
+    .ingredients-list {
+      list-style-type: none;
+      padding-left: 0;
+      margin: 0;
+    }
+    
+    .ingredients-list li {
+      position: relative;
+      padding-left: 20px;
+      margin-bottom: 8px;
+      word-wrap: break-word; /* Handle long ingredients */
+    }
+    
+    .ingredients-list li:before {
+      content: "•";
+      color: #ff8000;
+      font-size: 1.2em;
+      position: absolute;
+      left: 0;
+    }
+    
+    .instructions {
+      color: #555;
+      white-space: pre-line;
+      word-wrap: break-word; /* Handle long text */
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Recipes</h1>
+  </header>
+  
+  <div class="container" id="recipesContainer">
+    <!-- Recipe cards will be injected here -->
+  </div>
+  
+  <script type="module">
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js';
+    import { getFirestore, collection, getDocs } from 'https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js';
+    
+    const firebaseConfig = {
+      apiKey: "AIzaSyBFsOIlVpb7RX-9NgEbMESSajwax33LOtI",
+      authDomain: "swapwell-23f30.firebaseapp.com",
+      projectId: "swapwell-23f30",
+      storageBucket: "swapwell-23f30.appspot.com",
+      messagingSenderId: "130749375667",
+      appId: "1:130749375667:web:81ec77f24d18eb3032fcc6"
+    };
+    
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    
+    async function fetchRecipes() {
+      try {
+        const querySnapshot = await getDocs(collection(db, "recipes"));
+        const container = document.getElementById('recipesContainer');
+        
+        if (querySnapshot.empty) {
+          container.innerHTML = '<p>No recipes found.</p>';
+        } else {
+          querySnapshot.forEach((doc) => {
+            const data = doc.data();
+            const card = document.createElement('div');
+            card.className = 'card';
+            
+            // Recipe title
+            const title = document.createElement('h2');
+            title.textContent = data.title || 'Untitled Recipe';
+            card.appendChild(title);
+            
+            // Create content container
+            const cardContent = document.createElement('div');
+            cardContent.className = 'card-content';
+            
+            // Ingredients section
+            const ingredientsSection = document.createElement('div');
+            ingredientsSection.className = 'card-section';
+            ingredientsSection.innerHTML = '<h3>Ingredients</h3>';
+            
+            const ingredientsList = document.createElement('ul');
+            ingredientsList.className = 'ingredients-list';
+            
+            if (Array.isArray(data.ingredients)) {
+              data.ingredients.forEach(ingredient => {
+                const li = document.createElement('li');
+                li.textContent = ingredient;
+                ingredientsList.appendChild(li);
+              });
+            } else {
+              const li = document.createElement('li');
+              li.textContent = data.ingredients;
+              ingredientsList.appendChild(li);
+            }
+            
+            // Instructions section
+            const instructionsSection = document.createElement('div');
+            instructionsSection.className = 'card-section';
+            instructionsSection.innerHTML = `
+              <h3>Instructions</h3>
+              <div class="instructions">${data.instructions || data.recipe}</div>
+            `;
+            
+            // Append sections to content container
+            ingredientsSection.appendChild(ingredientsList);
+            cardContent.appendChild(ingredientsSection);
+            cardContent.appendChild(instructionsSection);
+            
+            // Append content container to card
+            card.appendChild(cardContent);
+            container.appendChild(card);
+          });
+        }
+      } catch (error) {
+        console.error("Error fetching recipes: ", error);
+      }
+    }
+    
+    fetchRecipes();
+  </script>
+</body>
+</html>

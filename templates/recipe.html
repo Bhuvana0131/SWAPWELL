@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Food Sharing Site</title>
+  <style>
+    :root {
+      --primary-color: #ff8000;
+      --secondary-color: #343232;
+      --text-color: white;
+      --bg-color: #000000;
+    }
+    
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      line-height: 1.6;
+    }
+    
+    header {
+      background: var(--secondary-color);
+      padding: 1rem 0;
+      text-align: center;
+      color: var(--primary-color);
+    }
+    
+    .container {
+      width: 80%;
+      margin: 20px auto;
+      padding: 20px;
+      background: rgba(34, 34, 34, 0.8);
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    }
+    
+    form {
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .section {
+      margin-bottom: 20px;
+    }
+    
+    label {
+      margin-bottom: 8px;
+      display: block;
+    }
+    
+    textarea, input {
+      padding: 10px;
+      border: none;
+      border-radius: 4px;
+      margin-bottom: 10px;
+      width: 100%;
+      box-sizing: border-box;
+      background-color: #fff;
+      color: #333;
+    }
+    
+    textarea {
+      resize: vertical;
+    }
+    
+    .ingredients-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    
+    .ingredient-input {
+      display: flex;
+      gap: 10px;
+    }
+    
+    button {
+      padding: 12px 20px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 16px;
+      background-color: var(--primary-color);
+      color: var(--text-color);
+      transition: background-color 0.3s;
+    }
+    
+    button:hover {
+      background-color: rgba(255, 128, 0, 0.8);
+    }
+    
+    #addIngredient {
+      background-color: var(--secondary-color);
+      margin-bottom: 20px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Recipe Sharing</h1>
+    <p>Share your delicious recipes with the world!</p>
+  </header>
+  
+  <div class="container">
+    <form id="recipeForm">
+      <div class="section">
+        <label for="title">Recipe Name</label>
+        <input type="text" id="title" name="title" placeholder="Enter recipe name..." required>
+      </div>
+      
+      <div class="section">
+        <label>Ingredients</label>
+        <div id="ingredientsList" class="ingredients-list">
+          <div class="ingredient-input">
+            <input type="text" class="ingredient" placeholder="Enter an ingredient..." required>
+          </div>
+        </div>
+        <button type="button" id="addIngredient">Add Another Ingredient</button>
+      </div>
+      
+      <div class="section">
+        <label for="instructions">Cooking Instructions</label>
+        <textarea id="instructions" name="instructions" rows="6" placeholder="Write your recipe instructions here..." required></textarea>
+      </div>
+      
+      <button type="submit">Submit Recipe</button>
+    </form>
+  </div>
+  
+  <script type="module">
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js';
+    import { getFirestore, collection, addDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js';
+    
+    const firebaseConfig = {
+      apiKey: "AIzaSyBFsOIlVpb7RX-9NgEbMESSajwax33LOtI",
+      authDomain: "swapwell-23f30.firebaseapp.com",
+      projectId: "swapwell-23f30",
+      storageBucket: "swapwell-23f30.appspot.com",
+      messagingSenderId: "130749375667",
+      appId: "1:130749375667:web:81ec77f24d18eb3032fcc6"
+    };
+    
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    
+    // Add ingredient field
+    document.getElementById('addIngredient').addEventListener('click', () => {
+      const ingredientInput = document.createElement('div');
+      ingredientInput.className = 'ingredient-input';
+      ingredientInput.innerHTML = `
+        <input type="text" class="ingredient" placeholder="Enter an ingredient..." required>
+      `;
+      document.getElementById('ingredientsList').appendChild(ingredientInput);
+    });
+    
+    // Handle form submission
+    document.getElementById('recipeForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const title = document.getElementById('title').value;
+      const instructions = document.getElementById('instructions').value;
+      const ingredientInputs = document.querySelectorAll('.ingredient');
+      const ingredients = Array.from(ingredientInputs).map(input => input.value.trim()).filter(Boolean);
+      
+      try {
+        await addDoc(collection(db, "recipes"), {
+          title: title,
+          ingredients: ingredients,
+          instructions: instructions,
+          timestamp: serverTimestamp()
+        });
+        
+        alert("Recipe submitted successfully!");
+        document.getElementById('recipeForm').reset();
+        // Reset ingredients to single input
+        document.getElementById('ingredientsList').innerHTML = `
+          <div class="ingredient-input">
+            <input type="text" class="ingredient" placeholder="Enter an ingredient..." required>
+          </div>
+        `;
+      } catch (error) {
+        console.error("Error adding document: ", error);
+        alert("Error submitting recipe. Please try again.");
+      }
+    });
+  </script>
+</body>
+</html>
